@@ -23,10 +23,20 @@ const doctorSchema = new mongoose.Schema(
       ref: "User",
     },
 
+     name: {
+      type: String,
+      required: true,
+    },
+
     specialization: String,
     experience: Number,
 
     availability: [availabilitySchema],
+
+    image: {
+      url: String,
+      fileId: String,
+    },
   },
   { timestamps: true },
 );

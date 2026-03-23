@@ -12,7 +12,7 @@ const router = express.Router();
 router.post(
   "/",
   authMiddleware,
-  //   roleMiddleware("PATIENT", "RECEPTIONIST"),
+  roleMiddleware("PATIENT", "RECEPTIONIST"),
   createAppointment,
 );
 
