@@ -45,3 +45,16 @@ export const rejectAppointment = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+
+export const getDoctorAppointments = async (req, res) => {
+  try {
+    const appointments = await appointmentService.getMyAppointments(
+      req.user.id
+    );
+
+    res.json(appointments);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};

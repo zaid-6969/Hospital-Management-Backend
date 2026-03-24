@@ -4,7 +4,7 @@ import Doctor from "../models/doctor.model.js";
 export const createAppointment = async (data) => {
   const { doctorId, equipmentId, date, time } = data;
 
-  // ❌ Cannot select both
+  //  Cannot select both
   if (!doctorId && !equipmentId) {
     throw new Error("Select doctor or equipment");
   }
@@ -77,4 +77,15 @@ export const getDoctorStats = async (doctorId) => {
   });
 
   return { accepted, rejected };
+};
+
+
+export const getMyAppointments = async (userId) => {
+  const doctor = await Doctor.findOne({ userId });
+
+  if (!doctor) throw new Error("Doctor not found");
+
+  return await Appointment.find({
+    doctorId: doctor._id,
+  }).populate("patientId", "name email");
 };

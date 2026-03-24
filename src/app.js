@@ -25,7 +25,7 @@ app.use("/api/v1/medical", medicalRoutes);
 
 app.use("/api/v1/availability", availabilityRoutes);
 
-app.use("/api/v1/appointment", appointmentRoutes);
+app.use("/api/v1/appointments", appointmentRoutes);
 
 app.use("/api/v1/doctors" , doctorRoutes)
 
