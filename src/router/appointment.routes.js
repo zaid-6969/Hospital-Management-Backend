@@ -3,39 +3,80 @@ import {
   createAppointment,
   acceptAppointment,
   rejectAppointment,
+  updateAppointmentStatus,
+  getAllAppointments,
+  assignDoctor,
+  getDoctorAppointments,
+  getAdminStats,
 } from "../controllers/appointment.controller.js";
+
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { roleMiddleware } from "../middleware/role.middleware.js";
-import { getDoctorAppointments } from "../controllers/appointment.controller.js";
 
 const router = express.Router();
 
+// CREATE
 router.post(
   "/",
   authMiddleware,
   roleMiddleware("PATIENT", "RECEPTIONIST"),
-  createAppointment,
+  createAppointment
 );
 
+// ACCEPT
 router.patch(
   "/:id/accept",
   authMiddleware,
   roleMiddleware("DOCTOR"),
-  acceptAppointment,
+  acceptAppointment
 );
 
+// REJECT
 router.patch(
   "/:id/reject",
   authMiddleware,
   roleMiddleware("DOCTOR"),
-  rejectAppointment,
+  rejectAppointment
 );
 
+// DOCTOR MY APPOINTMENTS
 router.get(
   "/my",
   authMiddleware,
   roleMiddleware("DOCTOR"),
-  getDoctorAppointments,
+  getDoctorAppointments
+);
+
+// UPDATE STATUS
+router.put(
+  "/status/:id",
+  authMiddleware,
+  roleMiddleware("DOCTOR", "RECEPTIONIST"),
+  updateAppointmentStatus
+);
+
+// 🔥 FIXED → ADMIN ADDED
+router.get(
+  "/",
+  authMiddleware,
+  roleMiddleware("RECEPTIONIST", "ADMIN"),
+  getAllAppointments
+);
+
+// ASSIGN DOCTOR
+router.put(
+  "/assign/:id",
+  authMiddleware,
+  roleMiddleware("RECEPTIONIST"),
+  assignDoctor
+);
+
+// ADMIN STATS
+router.get(
+  "/admin/stats",
+  authMiddleware,
+  roleMiddleware("ADMIN"),
+  getAdminStats
 );
 
 export default router;

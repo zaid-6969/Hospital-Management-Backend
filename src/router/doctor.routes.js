@@ -5,6 +5,7 @@ import {
   deleteDoctor,
   getDoctorById,
   getAllDoctors,
+  getDoctorStats,
 } from "../controllers/doctor.controller.js";
 
 import { authMiddleware } from "../middleware/auth.middleware.js";
@@ -13,17 +14,16 @@ import upload from "../middleware/multer.js";
 import { getMyDoctorProfile } from "../controllers/doctor.controller.js";
 const router = express.Router();
 
-//  GET ALL
+// GET ALL
 router.get("/", getAllDoctors);
 
-//  GET BY ID
-router.get(
-  "/:id",
-  // authMiddleware,
-  getDoctorById,
-);
+// ✅ STATS FIRST
+router.get("/stats/:id", getDoctorStats);
 
-//  CREATE
+// GET BY ID
+router.get("/:id", getDoctorById);
+
+// CREATE
 router.post(
   "/",
   authMiddleware,
@@ -32,7 +32,7 @@ router.post(
   createDoctor,
 );
 
-//  UPDATE
+// UPDATE
 router.put(
   "/:id",
   authMiddleware,
@@ -41,11 +41,10 @@ router.put(
   updateDoctor,
 );
 
-//  DELETE
+// DELETE
 router.delete("/:id", authMiddleware, roleMiddleware("ADMIN"), deleteDoctor);
 
-
-// LOGIN TO THE DOCTOR API
+// MY PROFILE
 router.get("/me", authMiddleware, roleMiddleware("DOCTOR"), getMyDoctorProfile);
 
 export default router;

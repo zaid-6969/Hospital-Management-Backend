@@ -1,7 +1,9 @@
 import Doctor from "../models/doctor.model.js";
+import mongoose from "mongoose";
 import User from "../models/user.model.js";
 import getImageKit from "../utils/imagekit.js";
 import { toFile } from "@imagekit/nodejs"; // ← import toFile helper
+import Appointment from "../models/appointment.model.js"; // ✅ ADD THIS
 
 export const createDoctor = async (req, res) => {
   try {
@@ -14,11 +16,18 @@ export const createDoctor = async (req, res) => {
     }
 
     let parsedAvailability = [];
+
     if (availability) {
-      try {
-        parsedAvailability = JSON.parse(availability);
-      } catch {
-        return res.status(400).json({ message: "Invalid availability format" });
+      if (typeof availability === "string") {
+        try {
+          parsedAvailability = JSON.parse(availability);
+        } catch {
+          return res
+            .status(400)
+            .json({ message: "Invalid availability format" });
+        }
+      } else {
+        parsedAvailability = availability; // ✅ direct JSON
       }
     }
 
@@ -111,7 +120,7 @@ export const deleteDoctor = async (req, res) => {
     }
 
     if (doctor.image?.fileId) {
-      await getImageKit().files.deleteFile(doctor.image.fileId); 
+      await getImageKit().files.deleteFile(doctor.image.fileId);
     }
 
     await doctor.deleteOne();
@@ -138,7 +147,6 @@ export const getDoctorById = async (req, res) => {
   }
 };
 
-
 export const getAllDoctors = async (req, res) => {
   try {
     const doctors = await Doctor.find().sort({ createdAt: -1 });
@@ -164,5 +172,28 @@ export const getMyDoctorProfile = async (req, res) => {
     res.json(doctor);
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+};
+
+export const getDoctorStats = async (req, res) => {
+  try {
+    const doctorId = req.params.id; // ✅ simple
+
+    const total = await Appointment.countDocuments({ doctorId });
+
+    const accepted = await Appointment.countDocuments({
+      doctorId,
+      status: "ACCEPTED",
+    });
+
+    const rejected = await Appointment.countDocuments({
+      doctorId,
+      status: "REJECTED",
+    });
+
+    res.json({ total, accepted, rejected });
+  } catch (err) {
+    console.error("Doctor Stats Error:", err);
+    res.status(500).json({ message: err.message });
   }
 };
