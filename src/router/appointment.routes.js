@@ -8,6 +8,7 @@ import {
   assignDoctor,
   getDoctorAppointments,
   getAdminStats,
+  deleteAppointment,
 } from "../controllers/appointment.controller.js";
 
 import { authMiddleware } from "../middleware/auth.middleware.js";
@@ -20,7 +21,7 @@ router.post(
   "/",
   authMiddleware,
   roleMiddleware("PATIENT", "RECEPTIONIST"),
-  createAppointment
+  createAppointment,
 );
 
 // ACCEPT
@@ -28,7 +29,7 @@ router.patch(
   "/:id/accept",
   authMiddleware,
   roleMiddleware("DOCTOR"),
-  acceptAppointment
+  acceptAppointment,
 );
 
 // REJECT
@@ -36,7 +37,7 @@ router.patch(
   "/:id/reject",
   authMiddleware,
   roleMiddleware("DOCTOR"),
-  rejectAppointment
+  rejectAppointment,
 );
 
 // DOCTOR MY APPOINTMENTS
@@ -44,7 +45,7 @@ router.get(
   "/my",
   authMiddleware,
   roleMiddleware("DOCTOR"),
-  getDoctorAppointments
+  getDoctorAppointments,
 );
 
 // UPDATE STATUS
@@ -52,7 +53,7 @@ router.put(
   "/status/:id",
   authMiddleware,
   roleMiddleware("DOCTOR", "RECEPTIONIST"),
-  updateAppointmentStatus
+  updateAppointmentStatus,
 );
 
 // 🔥 FIXED → ADMIN ADDED
@@ -60,7 +61,7 @@ router.get(
   "/",
   authMiddleware,
   roleMiddleware("RECEPTIONIST", "ADMIN"),
-  getAllAppointments
+  getAllAppointments,
 );
 
 // ASSIGN DOCTOR
@@ -68,7 +69,7 @@ router.put(
   "/assign/:id",
   authMiddleware,
   roleMiddleware("RECEPTIONIST"),
-  assignDoctor
+  assignDoctor,
 );
 
 // ADMIN STATS
@@ -76,7 +77,15 @@ router.get(
   "/admin/stats",
   authMiddleware,
   roleMiddleware("ADMIN"),
-  getAdminStats
+  getAdminStats,
+);
+
+// DELETE APPOINTMENT
+router.delete(
+  "/:id",
+  authMiddleware,
+  roleMiddleware("RECEPTIONIST", "ADMIN"),
+  deleteAppointment,
 );
 
 export default router;

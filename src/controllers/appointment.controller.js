@@ -236,3 +236,27 @@ export const getAdminStats = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+// ✅ DELETE APPOINTMENT (RECEPTION + ADMIN)
+export const deleteAppointment = async (req, res) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+
+    if (!appointment) {
+      return res.status(404).json({
+        message: "Appointment not found",
+      });
+    }
+
+    await appointment.deleteOne();
+
+    res.json({
+      message: "Appointment deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
