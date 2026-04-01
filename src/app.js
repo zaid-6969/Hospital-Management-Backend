@@ -32,6 +32,6 @@ app.use("/api/v1/doctors", doctorRoutes)
 
 app.use("/api/v1/patient-details", patientDetailsRoutes);
 
-app.use("/api/v1/patient-details", patientDetailsRoutes); // ✅ NEW
+app.use("/api/v1/patient-details", patientDetailsRoutes); 
 
 export default app;

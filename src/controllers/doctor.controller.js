@@ -7,13 +7,12 @@ import Appointment from "../models/appointment.model.js"; // ✅ ADD THIS
 
 export const createDoctor = async (req, res) => {
   try {
-    const { userId, name, specialization, experience, availability } =
+    const { userId, name, specialization, experience, availability, role } =
       req.body || {};
-
     const user = await User.findById(userId);
-    if (!user || user.role !== "DOCTOR") {
-      return res.status(400).json({ message: "Invalid doctor user" });
-    }
+    // if (!user || user.role !== "DOCTOR") {
+    //   return res.status(400).json({ message: "Invalid doctor user" });
+    // }
 
     let parsedAvailability = [];
 
@@ -56,6 +55,11 @@ export const createDoctor = async (req, res) => {
       availability: parsedAvailability,
       image: imageData,
     });
+
+    if (user) {
+      user.role = role || "DOCTOR"; 
+      await user.save();
+    }
 
     res.status(201).json(doctor);
   } catch (err) {
