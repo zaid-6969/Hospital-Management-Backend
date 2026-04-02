@@ -5,9 +5,20 @@ import Appointment from "../models/appointment.model.js";
 // ✅ CREATE APPOINTMENT (PATIENT)
 export const createAppointment = async (req, res) => {
   try {
-    const data = await appointmentService.createAppointment({
-      ...req.body,
+    const { doctorId, date, time } = req.body;
+
+    if (!doctorId) {
+      return res.status(400).json({
+        message: "Doctor is required",
+      });
+    }
+
+    const data = await Appointment.create({
       patientId: req.user.id,
+      doctorId, // 🔥 IMPORTANT
+      date,
+      time,
+      status: "REQUESTED",
     });
 
     res.status(201).json(data);
@@ -99,6 +110,7 @@ export const getDoctorAppointments = async (req, res) => {
       doctorId: doctor._id,
     })
       .populate("patientId", "name email")
+      .populate("doctorId", "name specialization image")
       .sort({ createdAt: -1 });
 
     res.json(appointments);
@@ -222,21 +234,14 @@ export const getAdminStats = async (req, res) => {
       accepted,
       rejected,
       requested,
-      acceptedPercent: total
-        ? ((accepted / total) * 100).toFixed(1)
-        : 0,
-      rejectedPercent: total
-        ? ((rejected / total) * 100).toFixed(1)
-        : 0,
-      requestedPercent: total
-        ? ((requested / total) * 100).toFixed(1)
-        : 0,
+      acceptedPercent: total ? ((accepted / total) * 100).toFixed(1) : 0,
+      rejectedPercent: total ? ((rejected / total) * 100).toFixed(1) : 0,
+      requestedPercent: total ? ((requested / total) * 100).toFixed(1) : 0,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 // ✅ DELETE APPOINTMENT (RECEPTION + ADMIN)
 export const deleteAppointment = async (req, res) => {
@@ -258,5 +263,44 @@ export const deleteAppointment = async (req, res) => {
     res.status(500).json({
       message: error.message,
     });
+  }
+};
+
+
+export const getMyAppointmentsPatient = async (req, res) => {
+  try {
+    const appointments = await Appointment.find({
+      patientId: req.user.id,
+    })
+      .populate("doctorId", "name specialization image")
+      .sort({ createdAt: -1 });
+
+    res.json(appointments);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// ✅ PATIENT DELETE OWN APPOINTMENT
+export const deleteMyAppointment = async (req, res) => {
+  try {
+    const appointment = await Appointment.findOne({
+      _id: req.params.id,
+      patientId: req.user.id, // 🔥 only his appointment
+    });
+
+    if (!appointment) {
+      return res.status(404).json({
+        message: "Appointment not found or not yours",
+      });
+    }
+
+    await appointment.deleteOne();
+
+    res.json({
+      message: "Appointment deleted successfully",
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

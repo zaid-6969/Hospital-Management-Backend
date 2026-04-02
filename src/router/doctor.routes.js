@@ -6,24 +6,53 @@ import {
   getDoctorById,
   getAllDoctors,
   getDoctorStats,
+  getMyDoctorStats,
+  getMyDoctorProfile,
 } from "../controllers/doctor.controller.js";
 
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { roleMiddleware } from "../middleware/role.middleware.js";
 import upload from "../middleware/multer.js";
-import { getMyDoctorProfile } from "../controllers/doctor.controller.js";
+
 const router = express.Router();
 
-// GET ALL
+// ─────────────────────────────────────────
+// ✅ PUBLIC / GENERAL ROUTES
+// ─────────────────────────────────────────
+
+// GET ALL DOCTORS
 router.get("/", getAllDoctors);
 
-// ✅ STATS FIRST
+// ─────────────────────────────────────────
+// 🔥 DOCTOR SELF ROUTES (VERY IMPORTANT)
+// ─────────────────────────────────────────
+
+// GET MY PROFILE
+router.get("/me", authMiddleware, roleMiddleware("DOCTOR"), getMyDoctorProfile);
+
+// GET MY STATS
+router.get(
+  "/stats/me",
+  authMiddleware,
+  roleMiddleware("DOCTOR"),
+  getMyDoctorStats,
+);
+
+// ─────────────────────────────────────────
+// 🔥 DYNAMIC ROUTES (MUST COME AFTER)
+// ─────────────────────────────────────────
+
+// GET STATS BY ID (ADMIN USE)
 router.get("/stats/:id", getDoctorStats);
 
-// GET BY ID
+// GET DOCTOR BY ID
 router.get("/:id", getDoctorById);
 
-// CREATE
+// ─────────────────────────────────────────
+// 🔐 ADMIN ROUTES
+// ─────────────────────────────────────────
+
+// CREATE DOCTOR
 router.post(
   "/",
   authMiddleware,
@@ -32,7 +61,7 @@ router.post(
   createDoctor,
 );
 
-// UPDATE
+// UPDATE DOCTOR
 router.put(
   "/:id",
   authMiddleware,
@@ -41,10 +70,7 @@ router.put(
   updateDoctor,
 );
 
-// DELETE
+// DELETE DOCTOR
 router.delete("/:id", authMiddleware, roleMiddleware("ADMIN"), deleteDoctor);
-
-// MY PROFILE
-router.get("/me", authMiddleware, roleMiddleware("DOCTOR"), getMyDoctorProfile);
 
 export default router;

@@ -57,13 +57,45 @@ export const createDoctor = async (req, res) => {
     });
 
     if (user) {
-      user.role = role || "DOCTOR"; 
+      user.role = role || "DOCTOR";
       await user.save();
     }
 
     res.status(201).json(doctor);
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+};
+
+export const getMyDoctorStats = async (req, res) => {
+  try {
+    // 🔥 find doctor using logged-in user
+    const doctor = await Doctor.findOne({
+      userId: req.user.id,
+    });
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    const doctorId = doctor._id;
+
+    const total = await Appointment.countDocuments({ doctorId });
+
+    const accepted = await Appointment.countDocuments({
+      doctorId,
+      status: "ACCEPTED",
+    });
+
+    const rejected = await Appointment.countDocuments({
+      doctorId,
+      status: "REJECTED",
+    });
+
+    res.json({ total, accepted, rejected });
+  } catch (err) {
+    console.error("My Doctor Stats Error:", err);
+    res.status(500).json({ message: err.message });
   }
 };
 

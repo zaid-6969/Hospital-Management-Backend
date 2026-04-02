@@ -9,6 +9,8 @@ import {
   getDoctorAppointments,
   getAdminStats,
   deleteAppointment,
+  getMyAppointmentsPatient,
+  deleteMyAppointment,
 } from "../controllers/appointment.controller.js";
 
 import { authMiddleware } from "../middleware/auth.middleware.js";
@@ -86,6 +88,23 @@ router.delete(
   authMiddleware,
   roleMiddleware("RECEPTIONIST", "ADMIN"),
   deleteAppointment,
+);
+
+
+// PATIENT MY APPOINTMENTS
+router.get(
+  "/my/patient",
+  authMiddleware,
+  roleMiddleware("PATIENT"),
+  getMyAppointmentsPatient
+);
+
+// ✅ PATIENT DELETE HIS APPOINTMENT
+router.delete(
+  "/my/:id",
+  authMiddleware,
+  roleMiddleware("PATIENT"),
+  deleteMyAppointment
 );
 
 export default router;
