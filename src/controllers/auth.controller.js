@@ -1,4 +1,5 @@
 import * as authService from "../service/auth.service.js";
+import User from "../models/user.model.js";
 
 export const register = async (req, res) => {
   try {
@@ -6,6 +7,17 @@ export const register = async (req, res) => {
     res.status(201).json(data);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+export const getUsersByRole = async (req, res) => {
+  try {
+    const { role } = req.query;
+    const filter = role ? { role } : {};
+    const users = await User.find(filter).select("-password");
+    res.json({ users });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
