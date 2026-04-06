@@ -13,9 +13,25 @@ export const createAppointment = async (req, res) => {
       });
     }
 
+    // ── Slot conflict check ─────────────────────────────────
+    const conflict = await Appointment.findOne({
+      doctorId,
+      date,
+      time,
+      status: { $ne: "REJECTED" },
+    });
+
+    if (conflict) {
+      return res.status(409).json({
+        message:
+          "This time slot is already booked. Please choose a different slot.",
+      });
+    }
+    // ────────────────────────────────────────────────────────
+
     const data = await Appointment.create({
       patientId: req.user.id,
-      doctorId, // 🔥 IMPORTANT
+      doctorId,
       date,
       time,
       status: "REQUESTED",
@@ -266,7 +282,6 @@ export const deleteAppointment = async (req, res) => {
   }
 };
 
-
 export const getMyAppointmentsPatient = async (req, res) => {
   try {
     const appointments = await Appointment.find({
@@ -280,13 +295,35 @@ export const getMyAppointmentsPatient = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+// ✅ GET BOOKED SLOTS
+export const getBookedSlots = async (req, res) => {
+  try {
+    const { doctorId, date } = req.query;
 
-// ✅ PATIENT DELETE OWN APPOINTMENT
+    if (!doctorId || !date) {
+      return res
+        .status(400)
+        .json({ message: "doctorId and date are required" });
+    }
+
+    const appointments = await Appointment.find({
+      doctorId,
+      date,
+      status: { $ne: "REJECTED" },
+    }).select("time -_id");
+
+    res.json({ bookedSlots: appointments });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// ✅ DELETE ONLY USER'S OWN APPOINTMENT
 export const deleteMyAppointment = async (req, res) => {
   try {
     const appointment = await Appointment.findOne({
       _id: req.params.id,
-      patientId: req.user.id, // 🔥 only his appointment
+      patientId: req.user.id,
     });
 
     if (!appointment) {

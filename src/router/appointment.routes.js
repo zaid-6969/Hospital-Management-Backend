@@ -11,12 +11,16 @@ import {
   deleteAppointment,
   getMyAppointmentsPatient,
   deleteMyAppointment,
+  getBookedSlots,
 } from "../controllers/appointment.controller.js";
 
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { roleMiddleware } from "../middleware/role.middleware.js";
 
 const router = express.Router();
+
+// GET BOOKED SLOTS (public — patient checks availability)
+router.get("/slots", getBookedSlots);
 
 // CREATE
 router.post(

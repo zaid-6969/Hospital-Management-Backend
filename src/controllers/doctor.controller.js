@@ -233,3 +233,29 @@ export const getDoctorStats = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// ✅ DOCTOR TOGGLE AVAILABILITY (DOCTOR ONLY)
+export const toggleAvailability = async (req, res) => {
+  try {
+    const { isAvailable } = req.body;
+
+    // Find the doctor doc by the :id param
+    const doctor = await Doctor.findById(req.params.id);
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    // Security: only the doctor who owns this profile can toggle
+    if (String(doctor.userId) !== String(req.user.id)) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    doctor.isAvailable = typeof isAvailable === "boolean" ? isAvailable : !doctor.isAvailable;
+    await doctor.save();
+
+    res.json(doctor);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};

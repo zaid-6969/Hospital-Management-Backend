@@ -8,6 +8,7 @@ import {
   getDoctorStats,
   getMyDoctorStats,
   getMyDoctorProfile,
+  toggleAvailability,
 } from "../controllers/doctor.controller.js";
 
 import { authMiddleware } from "../middleware/auth.middleware.js";
@@ -36,6 +37,14 @@ router.get(
   authMiddleware,
   roleMiddleware("DOCTOR"),
   getMyDoctorStats,
+);
+
+// TOGGLE AVAILABILITY (DOCTOR ONLY)
+router.patch(
+  "/:id/availability",
+  authMiddleware,
+  roleMiddleware("DOCTOR"),
+  toggleAvailability,
 );
 
 // ─────────────────────────────────────────

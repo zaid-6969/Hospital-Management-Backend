@@ -37,6 +37,11 @@ const doctorSchema = new mongoose.Schema(
       url: String,
       fileId: String,
     },
+
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true },
 );
