@@ -1,6 +1,24 @@
 import * as authService from "../service/auth.service.js";
 import User from "../models/user.model.js";
+import { handleGoogleAuth } from "../service/googleAuth.service.js";
 
+export const googleAuth = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    const { user, token: jwtToken } = await handleGoogleAuth(token);
+
+    res.cookie("token", jwtToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+
+    res.json({ user });
+  } catch (error) {
+    res.status(400).json({ message: "Google login failed" });
+  }
+};
 export const register = async (req, res) => {
   try {
     const data = await authService.registerUser(req.body);
@@ -27,7 +45,7 @@ export const login = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, 
+      secure: false,
       sameSite: "lax",
     });
 
@@ -41,8 +59,8 @@ export const logout = async (req, res) => {
   try {
     res.clearCookie("token", {
       httpOnly: true,
-      secure: false, 
-      sameSite: "lax"
+      secure: false,
+      sameSite: "lax",
     });
 
     res.json({ message: "Logged out successfully" });
