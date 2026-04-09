@@ -5,9 +5,14 @@ export const createAppointment = async (data) => {
   const { doctorId, equipmentId, date, time } = data;
 
   //  Cannot select both
-  if (!doctorId && !equipmentId) {
-    throw new Error("Select doctor or equipment");
-  }
+if (!doctorId && !equipmentId) {
+  throw new Error("Select doctor or equipment");
+}
+
+// Cannot select both
+if (doctorId && equipmentId) {
+  throw new Error("Select either doctor OR equipment, not both");
+}
 
   // 🔒 Prevent double booking
   const existing = await Appointment.findOne({
