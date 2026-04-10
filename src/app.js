@@ -12,7 +12,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: CORS_ORIGIN,
+    origin: "http://localhost:5173git",
     credentials: true,
   }),
 );
