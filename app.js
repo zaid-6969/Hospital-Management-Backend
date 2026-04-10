@@ -1,12 +1,12 @@
 import express, { json } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import authRoutes from "./router/auth.routes.js";
-import medicalRoutes from "./router/medical.routes.js";
-import availabilityRoutes from "./router/availability.routes.js";
-import appointmentRoutes from "./router/appointment.routes.js";
-import doctorRoutes from "./router/doctor.routes.js"
-import patientDetailsRoutes from "./router/patientDetails.routes.js";
+import authRoutes from "../router/auth.routes.js";
+import medicalRoutes from "../router/medical.routes.js";
+import availabilityRoutes from "../router/availability.routes.js";
+import appointmentRoutes from "../router/appointment.routes.js";
+import doctorRoutes from "../router/doctor.routes.js"
+import patientDetailsRoutes from "../router/patientDetails.routes.js";
 
 const app = express();
 
