@@ -12,7 +12,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173git",
+    origin: "https://hospital-management-frontend-qayx.vercel.app",
     credentials: true,
   }),
 );
