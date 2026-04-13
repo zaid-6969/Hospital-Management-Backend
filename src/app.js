@@ -11,7 +11,9 @@ import patientDetailsRoutes from "./router/patientDetails.routes.js";
 
 const app = express(); // ✅ CREATE FIRST
 
-const allowedOrigin = "https://hospital-management-frontend-qayx.vercel.app";
+const allowedOrigin =[ "https://hospital-management-frontend-qayx.vercel.app",
+                       "http://localhost:5173"
+];
 
 // // ✅ MANUAL CORS (VERY IMPORTANT)
 // app.use((req, res, next) => {
