@@ -13,27 +13,27 @@ const app = express(); // ✅ CREATE FIRST
 
 const allowedOrigin = "https://hospital-management-frontend-qayx.vercel.app";
 
-// ✅ MANUAL CORS (VERY IMPORTANT)
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET,POST,PUT,PATCH,DELETE,OPTIONS",
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+// // ✅ MANUAL CORS (VERY IMPORTANT)
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+//   res.setHeader("Access-Control-Allow-Credentials", "true");
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET,POST,PUT,PATCH,DELETE,OPTIONS",
+//   );
+//   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+//   if (req.method === "OPTIONS") {
+//     return res.status(200).end();
+//   }
 
-  next();
-});
+//   next();
+// });
 
 // ✅ cors middleware (keep it)
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin: "https://hospital-management-frontend-qayx.vercel.app",
     credentials: true,
   }),
 );
